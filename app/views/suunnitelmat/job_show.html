@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block content %}
+  <h1>Ostoslista</h1>
+  <!-- Painikkeet tähän -->
+  <p>
+    <button class="btn btn-danger">Poista</button> <a href="#" class="btn btn-default">Muokkaa</a>
+  </p>
+  <!-- Tiedot tulee listana tähän -->
+  <ul>
+    <li><strong>Tärkeys:</strong> 3</li>
+    <li><strong>Luokka:</strong> Ostokset</li>
+    <li><strong>Status:</strong> <label class="label label-danger">kesken</label></li>
+    <li><strong>Lisäyspäivä:</strong> 17.9.2016</li>
+  </ul>
+  <!-- Kuvaus tulee tähän -->
+  <p>
+      Osta  kanaa, maitoa ja  omenoita.
+  </p>
+{% endblock %}

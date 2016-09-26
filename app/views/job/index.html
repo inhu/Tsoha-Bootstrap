@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block content %}
+  <h1>Käyttäjän Antti muistilista</h1>
+
+  <p>
+    <a href="{{base_path}}/job/new" class="btn btn-success">Lisää askare</a>
+  </p>
+
+  <table class="table table-striped table-bordered">
+    <thead>
+      <tr>
+        <th>Nimi</th>
+        <th>Tärkeys</th>
+        <th>Luokka</th>
+        <th>Status</th>
+        <th>Lisäyspäivä</th>
+        <th></th>
+      </tr>
+    </thead>
+
+    <tbody>
+      {% for job in jobs %}
+        <tr>
+          <td><a href="{{base_path}}/job/{{job.id}}">{{job.name}}</td>
+          <td>{{job.importance}}</td>
+          <td>{{job.category_id}}</td>
+          <td>
+              {% if job.done %}
+                <label class="label label-success">tehty
+              {% else %}
+                <label class="label label-danger">kesken
+              {% endif %}
+          </td>
+          <td>{{job.added}}</td>
+          <td><a class="btn btn-default btn-sm" href="{{base_path}}/job/{{job.id}}/edit">Muokkaa</a></td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{% endblock %}

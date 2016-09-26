@@ -9,7 +9,11 @@
 
     public static function sandbox(){
       // Testaa koodiasi täällä
-      View::make('helloworld.html');
+        $a= Job::find(1);
+        $jobs = Job::all();
+        
+        Kint::dump($a);
+        Kint::dump($jobs);
     }
     public static function job_list(){
         View::make('suunnitelmat/job_list.html');

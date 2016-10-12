@@ -1,29 +1,38 @@
 {% extends "base.html" %}
 {% block content %}
+
+{% if message!='' %}
 <div class="alert alert-success">
-  {{message}}
+    {{message}}
 </div>
-  <h1>{{job.name}}</h1>
-  <!-- Painikkeet tähän -->
-  <p>
-    <button class="btn btn-danger">Poista</button> <a href="{{base_path}}/job/{{job.id}}/edit" class="btn btn-default">Muokkaa</a>
-  </p>
-  <!-- Tiedot tulee listana tähän -->
-  <ul>
+{% endif %}
+<h1>{{job.name}}</h1>
+<!-- Painikkeet tähän -->
+<p>
+<form method="post" action="{{base_path}}/job/{{job.id}}/destroy" style="display: inline-block;">
+    <button type="submit" class="btn btn-danger">Poista</button>
+</form>
+<a href="{{base_path}}/job/{{job.id}}/edit" class="btn btn-default">Muokkaa</a>
+<form method="post" action="{{base_path}}/job/{{job.id}}/done" style="display: inline-block;">
+    <button type="submit" class="btn btn-default">Tehty</button>
+</form>
+</p>
+<!-- Tiedot tulee listana tähän -->
+<ul>
     <li><strong>Tärkeys:</strong> {{job.importance}}</li>
     <li><strong>Luokka:</strong> {{job.category_id}}</li>
     <li><strong>Status:</strong> 
         {% if job.done %}
-               <label class="label label-success">tehty
-              {% else %}
-               <label class="label label-danger">kesken
-              {% endif %}
+        <label class="label label-success">tehty
+            {% else %}
+            <label class="label label-danger">kesken
+                {% endif %}
                 </li>
-                
-    <li><strong>Lisäyspäivä:</strong> {{job.added}}</li>
-  </ul>
-  <!-- Kuvaus tulee tähän -->
-  <p>
-      {{job.description}}
-  </p>
-{% endblock %}
+
+                <li><strong>Lisäyspäivä:</strong> {{job.added}}</li>
+                </ul>
+                <!-- Kuvaus tulee tähän -->
+                <p>
+                    {{job.description}}
+                </p>
+                {% endblock %}

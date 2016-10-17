@@ -4,9 +4,11 @@ class Job extends BaseModel {
 
     public $id, $player_id, $category_id, $name, $done,
             $description, $importance, $added;
+    public $validators;
 
     public function __construct($attributes) {
         parent::__construct($attributes);
+        $this->validators = array('validate_name', 'validate_description', 'validate_importance');
     }
 
     public static function all() {
@@ -69,14 +71,39 @@ class Job extends BaseModel {
         $query->execute(array('id' => $this->id));
     }
 
+    public function update() {
+        $query = DB::connection()->prepare('Update Job SET'
+                . ' name=:name, description=:description, importance=:importance'
+                . ' WHERE id = :id');
+        $query->execute(array('name' => $this->name, 'description' => $this->description, 'importance' => $this->importance, 'id'=>  $this->id));
+        
+    }
+
     public function validate_name() {
         $errors = array();
         if ($this->name == '' || $this->name == null) {
-            $errors = 'Nimi ei saa olla tyhjä';
+            $errors[] = 'Nimi ei saa olla tyhjä';
         }
         if (strlen($this->name) < 2) {
             $errors[] = 'Nimen pituuden tulee olla vähintään kaksi merkkiä!';
         }
+        return $errors;
+    }
+
+    public function validate_description() {
+        $errors = array();
+        if ($this->description == '' || $this->description == null) {
+            $errors[] = 'Kuvaus ei saa olla tyhjä';
+        }
+        return $errors;
+    }
+
+    public function validate_importance() {
+        $errors = array();
+        if (!is_numeric($this->importance)) {
+            $errors[] = 'Tärkeyden on oltava numero';
+        }
+        return $errors;
     }
 
 }

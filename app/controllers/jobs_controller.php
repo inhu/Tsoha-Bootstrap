@@ -16,13 +16,19 @@ class JobController extends BaseController {
 
     public static function store() {
         $params = $_POST;
-        $job = new Job(array(
+        $attributes = array(
             'name' => $params['name'],
             'description' => $params['description'],
             'importance' => $params['importance']
-        ));
-        $job->save();
-        Redirect::to('/job/' . $job->id, array('message' => 'Askare on lisätty listaasi.'));
+        );
+        $job = new Job($attributes);
+        $errors = $job->errors();
+        if (count($errors) == 0) {
+            $job->save();
+            Redirect::to('/job/' . $job->id, array('message' => 'Askare on lisätty listaasi.'));
+        } else {
+            View::make('job/new.html', array('errors' => $errors, 'attributes' => $attributes));
+        }
     }
 
     public static function create() {
@@ -37,24 +43,34 @@ class JobController extends BaseController {
     //ei toimi oikein
     public static function update($id) {
         $params = $_POST;
-
-        $job = new Job(array(
+        
+        $attributes = array(
+            'id' => $id,
             'name' => $params['name'],
             'description' => $params['description'],
             'importance' => $params['importance']
-        ));
-        $job->update();
-        Redirect::to('/job/' . $job->id, array('message' => 'Askaretta on muokattu onnistuneesti.'));
+        );
+        $job = new Job($attributes);
+        $errors = $job->errors();
+        
+        if(count($errors)>0){
+            View::make('job/edit.html', array('errors' => $errors, 'attributes'=> $attributes));
+        }else{
+            $job->update();
+            Redirect::to('/job/' . $job->id, array('message' => 'Askaretta on muokattu onnistuneesti!'));
+        }
     }
-    
-    public static function destroy($id){
-        $job = new Job(array('id'=> $id));
+
+    public static function destroy($id) {
+        $job = new Job(array('id' => $id));
         $job->destroy();
-        Redirect::to('/job', array('message'=>'Askare on poistettu onnistuneesti!'));
+        Redirect::to('/job', array('message' => 'Askare on poistettu onnistuneesti!'));
     }
-    public static function done($id){
-        $job = new Job(array('id'=> $id));
+
+    public static function done($id) {
+        $job = new Job(array('id' => $id));
         $job->done();
         Redirect::to('/job/' . $job->id, array('message' => 'Askare on tehty.'));
     }
+
 }

@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% import "macros/forms.html" as forms %}
 {% block content %}
 
 {% if message!='' %}
@@ -9,10 +10,9 @@
 <h1>{{job.name}}</h1>
 <!-- Painikkeet tähän -->
 <p>
-<form method="post" action="{{base_path}}/job/{{job.id}}/destroy" style="display: inline-block;">
-    <button type="submit" class="btn btn-danger">Poista</button>
-</form>
-<a href="{{base_path}}/job/{{job.id}}/edit" class="btn btn-default">Muokkaa</a>
+    {{forms.destroy_button("#{base_path}/job/#{job.id}/destroy")}}
+
+    <a href="{{base_path}}/job/{{job.id}}/edit" class="btn btn-default">Muokkaa</a>
 <form method="post" action="{{base_path}}/job/{{job.id}}/done" style="display: inline-block;">
     <button type="submit" class="btn btn-default">Tehty</button>
 </form>

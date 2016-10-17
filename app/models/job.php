@@ -12,8 +12,11 @@ class Job extends BaseModel {
     }
 
     public static function all() {
-        $query = DB::connection()->prepare('SELECT * FROM Job');
-        $query->execute();
+        $user = UserController::get_user_logged_in();
+        if ($user == NULL)
+            return;
+        $query = DB::connection()->prepare('SELECT * FROM Job where player_id=:player_id');
+        $query->execute(array('player_id' => $user->id));
         $rows = $query->fetchAll();
         $jobs = array();
 
@@ -55,8 +58,9 @@ class Job extends BaseModel {
     }
 
     public function save() {
-        $query = DB::connection()->prepare('INSERT INTO Job (name, description, importance, added) VALUES (:name, :description, :importance, NOW()) RETURNING id');
-        $query->execute(array('name' => $this->name, 'description' => $this->description, 'importance' => $this->importance));
+        $user = UserController::get_user_logged_in();
+        $query = DB::connection()->prepare('INSERT INTO Job (name, description, importance, added, player_id) VALUES (:name, :description, :importance, NOW(), :player_id) RETURNING id');
+        $query->execute(array('name' => $this->name, 'description' => $this->description, 'importance' => $this->importance, 'player_id' => $user->id));
         $row = $query->fetch();
         $this->id = $row['id'];
     }
@@ -75,8 +79,7 @@ class Job extends BaseModel {
         $query = DB::connection()->prepare('Update Job SET'
                 . ' name=:name, description=:description, importance=:importance'
                 . ' WHERE id = :id');
-        $query->execute(array('name' => $this->name, 'description' => $this->description, 'importance' => $this->importance, 'id'=>  $this->id));
-        
+        $query->execute(array('name' => $this->name, 'description' => $this->description, 'importance' => $this->importance, 'id' => $this->id));
     }
 
     public function validate_name() {

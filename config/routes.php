@@ -4,6 +4,13 @@ $routes->get('/', function() {
     JobController::index();
 });
 
+$routes->get('/login', function() {
+    UserController::login();
+});
+$routes->post('/login', function() {
+    UserController::handle_login();
+});
+
 $routes->get('/hiekkalaatikko', function() {
     HelloWorldController::sandbox();
 });
@@ -33,17 +40,17 @@ $routes->post('/job/:id/done', function($id) {
 });
 
 $routes->post('/job/:id/destroy', function($id) {
-JobController::destroy($id);
+    JobController::destroy($id);
 });
 
 $routes->get('/job/:id', function($id) {
-JobController::show($id);
+    JobController::show($id);
 });
 
 $routes->get('/job/1/edit', function() {
-HelloWorldController::job_edit();
+    HelloWorldController::job_edit();
 });
 
 $routes->get('/login', function() {
-HelloWorldController::login();
+    HelloWorldController::login();
 });

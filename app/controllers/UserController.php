@@ -6,6 +6,11 @@ class UserController extends BaseController {
         View::make('user/login.html');
     }
 
+    public static function logout() {
+        $_SESSION['user'] = null;
+        Redirect::to('/login', array('message' => 'Olet kirjautunut ulos!'));
+    }
+
     public static function handle_login() {
         $params = $_POST;
 
@@ -18,4 +23,5 @@ class UserController extends BaseController {
             Redirect::to('/', array('message' => 'Tervetuloa takaisin ' . $user->name . '!'));
         }
     }
+
 }

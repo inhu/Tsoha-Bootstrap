@@ -3,18 +3,21 @@
 class JobController extends BaseController {
 
     public static function index() {
+        self::check_logged_in();
         $jobs = Job::all();
 
         View::make('job/index.html', array('jobs' => $jobs));
     }
 
     public static function show($id) {
+        self::check_logged_in();
         $job = Job::find($id);
 
         View::make('job/show.html', array('job' => $job));
     }
 
     public static function store() {
+        self::check_logged_in();
         $params = $_POST;
         $attributes = array(
             'name' => $params['name'],
@@ -32,16 +35,19 @@ class JobController extends BaseController {
     }
 
     public static function create() {
+        self::check_logged_in();
         View::make('job/new.html');
     }
 
     public static function edit($id) {
+        self::check_logged_in();
         $job = Job::find($id);
         View::make('job/edit.html', array('attributes' => $job));
     }
 
     //ei toimi oikein
     public static function update($id) {
+        self::check_logged_in();
         $params = $_POST;
         
         $attributes = array(
@@ -62,12 +68,14 @@ class JobController extends BaseController {
     }
 
     public static function destroy($id) {
+        self::check_logged_in();
         $job = new Job(array('id' => $id));
         $job->destroy();
         Redirect::to('/job', array('message' => 'Askare on poistettu onnistuneesti!'));
     }
 
     public static function done($id) {
+        self::check_logged_in();
         $job = new Job(array('id' => $id));
         $job->done();
         Redirect::to('/job/' . $job->id, array('message' => 'Askare on tehty.'));

@@ -51,10 +51,18 @@ $routes->get('/job/:id', function($id) {
     JobController::show($id);
 });
 
-$routes->get('/job/1/edit', function() {
-    HelloWorldController::job_edit();
+$routes->get('/category', function() {
+    CategoryController::index();
 });
 
-$routes->get('/login', function() {
-    HelloWorldController::login();
+$routes->get('/category/new', function() {
+    CategoryController::create();
+});
+
+$routes->post('/category', function() {
+    CategoryController::store();
+});
+
+$routes->post('/category/:id/destroy', function($id) {
+    CategoryController::destroy($id);
 });

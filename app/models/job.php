@@ -19,9 +19,9 @@ class Job extends BaseModel {
         $query->execute(array('player_id' => $user->id));
         $rows = $query->fetchAll();
         $jobs = array();
-
         foreach ($rows as $row) {
-            $jobs[] = new Job(array(
+            $category_name = Category::findName($row['category_id']);
+            $jobs[] = array(
                 'id' => $row['id'],
                 'player_id' => $row['player_id'],
                 'category_id' => $row['category_id'],
@@ -29,20 +29,22 @@ class Job extends BaseModel {
                 'done' => $row['done'],
                 'description' => $row['description'],
                 'importance' => $row['importance'],
-                'added' => $row['added']
-            ));
+                'added' => $row['added'],
+                'category_name' => $category_name
+            );
         }
         return $jobs;
     }
 
     public static function find($id) {
+        $user = UserController::get_user_logged_in();
         $query = DB::connection()->prepare
-                ('SELECT * FROM Job WHERE id = :id LIMIT 1');
-        $query->execute(array('id' => $id));
+                ('SELECT * FROM Job WHERE (id = :id) AND (player_id = :player_id) LIMIT 1');
+        $query->execute(array('id' => $id, 'player_id' => $user->id));
         $row = $query->fetch();
-
         if ($row) {
-            $job = new Job(array(
+            $category_name = Category::findName($row['category_id']);
+            $job = array(
                 'id' => $row['id'],
                 'player_id' => $row['player_id'],
                 'category_id' => $row['category_id'],
@@ -50,8 +52,9 @@ class Job extends BaseModel {
                 'done' => $row['done'],
                 'description' => $row['description'],
                 'importance' => $row['importance'],
-                'added' => $row['added']
-            ));
+                'added' => $row['added'],
+                'category_name' => $category_name
+            );
             return $job;
         }
         return null;
@@ -59,10 +62,17 @@ class Job extends BaseModel {
 
     public function save() {
         $user = UserController::get_user_logged_in();
-        $query = DB::connection()->prepare('INSERT INTO Job (name, description, importance, added, player_id) VALUES (:name, :description, :importance, NOW(), :player_id) RETURNING id');
-        $query->execute(array('name' => $this->name, 'description' => $this->description, 'importance' => $this->importance, 'player_id' => $user->id));
+        $query = DB::connection()->prepare('INSERT INTO Job (name, description, importance, added, player_id, category_id) VALUES (:name, :description, :importance, NOW(), :player_id, :category_id) RETURNING id');
+        $query->execute(array('name' => $this->name, 'description' => $this->description, 'importance' => $this->importance, 'player_id' => $user->id, 'category_id' => $this->category_id));
         $row = $query->fetch();
         $this->id = $row['id'];
+    }
+
+    public function update() {
+        $query = DB::connection()->prepare('Update Job SET'
+                . ' name=:name, description=:description, importance=:importance, category_id=:category_id'
+                . ' WHERE id = :id');
+        $query->execute(array('name' => $this->name, 'description' => $this->description, 'importance' => $this->importance, 'id' => $this->id, 'category_id' => $this->category_id));
     }
 
     public function destroy() {
@@ -73,13 +83,6 @@ class Job extends BaseModel {
     public function done() {
         $query = DB::connection()->prepare('UPDATE Job SET done=TRUE WHERE id = :id');
         $query->execute(array('id' => $this->id));
-    }
-
-    public function update() {
-        $query = DB::connection()->prepare('Update Job SET'
-                . ' name=:name, description=:description, importance=:importance'
-                . ' WHERE id = :id');
-        $query->execute(array('name' => $this->name, 'description' => $this->description, 'importance' => $this->importance, 'id' => $this->id));
     }
 
     public function validate_name() {

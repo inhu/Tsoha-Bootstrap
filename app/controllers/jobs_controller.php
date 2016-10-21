@@ -5,14 +5,13 @@ class JobController extends BaseController {
     public static function index() {
         self::check_logged_in();
         $jobs = Job::all();
-
+        
         View::make('job/index.html', array('jobs' => $jobs));
     }
 
     public static function show($id) {
         self::check_logged_in();
         $job = Job::find($id);
-
         View::make('job/show.html', array('job' => $job));
     }
 
@@ -22,7 +21,8 @@ class JobController extends BaseController {
         $attributes = array(
             'name' => $params['name'],
             'description' => $params['description'],
-            'importance' => $params['importance']
+            'importance' => $params['importance'],
+            'category_id' => $params['category']
         );
         $job = new Job($attributes);
         $errors = $job->errors();
@@ -36,16 +36,15 @@ class JobController extends BaseController {
 
     public static function create() {
         self::check_logged_in();
-        View::make('job/new.html');
+        View::make('job/new.html', array('categories' =>  Category::all()));
     }
 
     public static function edit($id) {
         self::check_logged_in();
         $job = Job::find($id);
-        View::make('job/edit.html', array('attributes' => $job));
+        View::make('job/edit.html', array('attributes' => $job,'categories' =>  Category::all()));
     }
 
-    //ei toimi oikein
     public static function update($id) {
         self::check_logged_in();
         $params = $_POST;
@@ -54,7 +53,8 @@ class JobController extends BaseController {
             'id' => $id,
             'name' => $params['name'],
             'description' => $params['description'],
-            'importance' => $params['importance']
+            'importance' => $params['importance'],
+            'category_id' => $params['category']
         );
         $job = new Job($attributes);
         $errors = $job->errors();
